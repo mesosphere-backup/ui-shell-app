@@ -3,11 +3,11 @@ import { ExtensionProvider } from "extension-kid";
 
 export const ApplicationExtension = Symbol("ApplicationExtension");
 export interface IApplicationExtension {
-  onStart(service: Application): void;
+  onStart(service: ApplicationProvider): void;
 }
 
 @injectable()
-export default class Application {
+export default class ApplicationProvider {
   private extensionsProvider: ExtensionProvider<IApplicationExtension>;
 
   constructor(
@@ -23,7 +23,7 @@ export default class Application {
     this.initExtensions();
   }
 
-  private initExtensions = () => {
+  private initExtensions = (): void => {
     for (const extension of this.extensionsProvider.getAllExtensions()) {
       if (extension.onStart) {
         extension.onStart(this);

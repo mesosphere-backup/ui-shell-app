@@ -1,20 +1,15 @@
-import { ContainerModule } from "inversify";
-import { Container, bindExtensionProvider } from "extension-kid";
-import UIKitApplication from "./UIKitApplication";
-import Application, { ApplicationExtension } from "./Application";
+import { Container } from "extension-kid";
+import ReactApplication from "./ReactApplication";
+import core, { ApplicationExtension } from "./core";
 
-const applicationModule = new ContainerModule((bind, _unbind) => {
-  bindExtensionProvider(bind, ApplicationExtension);
-  bind(Application)
-    .toSelf()
-    .inSingletonScope();
-});
+import examplePlugin from "./plugins/example-plugin";
 
 const container = new Container();
-container.load(applicationModule);
+container.load(core);
+container.load(examplePlugin());
 container
   .bind(ApplicationExtension)
-  .to(UIKitApplication)
+  .to(ReactApplication)
   .inSingletonScope();
 
 export default container;
