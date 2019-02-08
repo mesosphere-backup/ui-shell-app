@@ -9,7 +9,7 @@
     "@babel/plugin-proposal-decorators": "^7.2.0",
     "@dcos/ui-kit": "^1.19.2",
     "emotion": "^9.2.12",
-    "extension-kid": "0.2.0",
+    "extension-kid": "0.2.4",
     "inversify": "5.0.1",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
@@ -18,7 +18,7 @@
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "reflect-metadata": "^0.1.12",
-    "rxjs": "5.4.3",
+    "rxjs": "6.4",
     "ts-loader": "^5.3.1"
   },
   "scripts": {
