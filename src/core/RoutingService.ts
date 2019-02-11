@@ -1,6 +1,6 @@
 import { injectable, inject, named } from "inversify";
 import { EventEmitter } from "events";
-import { IExtensionProvider, ExtensionProvider } from "extension-kid";
+import { IExtensionProvider, ExtensionProvider } from "@extension-kid/core";
 import { IPartialNextState } from "react-router";
 
 const ROUTING_CHANGED = Symbol("ROUTING_CHANGED");

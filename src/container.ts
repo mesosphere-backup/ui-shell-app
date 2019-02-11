@@ -1,4 +1,4 @@
-import { Container } from "extension-kid";
+import { Container } from "@extension-kid/core";
 import ReactApplication from "./ReactApplication";
 import core, { ApplicationExtension } from "./core";
 

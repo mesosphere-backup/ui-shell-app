@@ -1,6 +1,6 @@
 import { injectable, inject, named } from "inversify";
 import { EventEmitter } from "events";
-import { IExtensionProvider, ExtensionProvider } from "extension-kid";
+import { IExtensionProvider, ExtensionProvider } from "@extension-kid/core";
 
 const NAVIGATION_CHANGE = Symbol("NAVIGATION_CHANGE");
 

@@ -1,5 +1,5 @@
 import { injectable, inject, named } from "inversify";
-import { ExtensionProvider } from "extension-kid";
+import { ExtensionProvider } from "@extension-kid/core";
 
 export const ApplicationExtension = Symbol("ApplicationExtension");
 export interface IApplicationExtension {
