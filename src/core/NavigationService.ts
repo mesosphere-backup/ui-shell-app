@@ -35,6 +35,19 @@ function unflatten(
 
   return children;
 }
+function dedupe(elements) {
+  return elements.reduce((acc, el) => {
+    if (acc.find(({ path }) => path === el.path)) {
+      if (el.duplicable) {
+        return acc;
+      }
+      console.warn("removed duplicate navigation item; you might want to TODO");
+      return acc.concat([el]);
+    } else {
+      return acc.concat([el]);
+    }
+  }, []);
+}
 
 @injectable()
 export default class NavigationService {
@@ -77,7 +90,7 @@ export default class NavigationService {
         []
       );
 
-    this.definition = unflatten(elements);
+    this.definition = dedupe(unflatten(elements));
 
     return this.definition;
   }

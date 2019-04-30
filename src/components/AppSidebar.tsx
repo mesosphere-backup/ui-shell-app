@@ -17,10 +17,10 @@ export default ({ sidebarIsOpen }: { sidebarIsOpen: boolean }) => {
 
   return (
     <Sidebar isOpen={sidebarIsOpen}>
-      {NavigationService.getDefinition().map((group, _index) => {
-        return (
-          <SidebarSection label={group.name}>
-            {group.children.map((element, _index) => (
+      {NavigationService.getDefinition().map((item, _index) => {
+        return item.children ? (
+          <SidebarSection label={item.name}>
+            {item.children.map((element, _index) => (
               <SidebarItem isActive onClick={() => {}}>
                 <SidebarItemLabel>
                   <Link to={element.path}>{element.name}</Link>
@@ -28,6 +28,8 @@ export default ({ sidebarIsOpen }: { sidebarIsOpen: boolean }) => {
               </SidebarItem>
             ))}
           </SidebarSection>
+        ) : (
+          <Link to={item.path}>{item.name}</Link>
         );
       })}
     </Sidebar>
