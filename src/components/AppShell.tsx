@@ -2,32 +2,58 @@ import React from "react";
 
 import { AppChrome } from "@dcos/ui-kit";
 
-import { RoutingService } from "../core";
 import AppSidebar from "./AppSidebar";
 import AppHeader from "./AppHeader";
-import container from "../container";
+import Navigation from "../core/Navigation";
+import Routing from "../core/Routing";
 
-interface AppState {
+interface Model {
   sidebarIsOpen: boolean;
+  routes: string[];
+  contentPanes: string[];
 }
 
-export default class AppShell extends React.Component<{}, AppState> {
-  state = {
-    sidebarIsOpen: true
-  };
+export default class AppShell extends React.Component<{}, Model> {
+  state = { sidebarIsOpen: true, routes: [], contentPanes: [] };
+
+  constructor(props) {
+    super(props);
+
+    Navigation.onChange(customElements => {
+      this.setState({ routes: customElements });
+    });
+    Routing.onChange(customElements => {
+      this.setState({ contentPanes: customElements });
+    });
+  }
 
   handleMenuClick = () => {
     this.setState({ sidebarIsOpen: !this.state.sidebarIsOpen });
   };
 
   render() {
-    const RoutingService: RoutingService = container.get("RoutingService");
-
     return (
       <AppChrome
-        sidebar={<AppSidebar sidebarIsOpen={this.state.sidebarIsOpen} />}
+        sidebar={
+          <AppSidebar
+            routes={this.state.routes}
+            sidebarIsOpen={this.state.sidebarIsOpen}
+          />
+        }
         headerBar={<AppHeader onMenuClick={this.handleMenuClick} />}
-        mainContent={RoutingService.getRoutes({})}
+        mainContent={
+          <div>
+            {this.state.contentPanes.length > 0 ? (
+              this.state.contentPanes.map(pane =>
+                React.createElement(pane, { key: pane })
+              )
+            ) : (
+              <div style={{ textAlign: "center" }}>
+                No Plugins registered yet...
+              </div>
+            )}
+          </div>
+        }
       />
     );
   }

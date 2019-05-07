@@ -2,26 +2,26 @@ var HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   mode: "production",
-  entry: './src/index.ts',
+  entry: "./src/index.tsx",
   output: {
-    path: __dirname + '/dist',
-    publicPath: '/',
-    filename: '[hash].bundle.js'
+    path: __dirname + "/dist",
+    publicPath: "/",
+    filename: "[hash].bundle.js"
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
+    extensions: [".js", ".jsx", ".json", ".ts", ".tsx"]
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: 'babel-loader'
+        loader: "babel-loader"
       },
       {
         test: /\.jsx?$/,
-        loader: 'babel-loader'
+        loader: "babel-loader"
       }
     ]
   },
-  plugins: [new HtmlWebpackPlugin({ template: 'src/index.html' })]
+  plugins: [new HtmlWebpackPlugin({ template: "src/index.html" })]
 };
