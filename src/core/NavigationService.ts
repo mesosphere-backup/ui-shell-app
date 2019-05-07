@@ -1,6 +1,6 @@
 import { injectable, inject, named } from "inversify";
-import { EventEmitter } from "events";
 import { IExtensionProvider, ExtensionProvider } from "@extension-kid/core";
+import { BehaviorSubject } from "rxjs";
 
 const NAVIGATION_CHANGE = Symbol("NAVIGATION_CHANGE");
 
@@ -52,8 +52,7 @@ function dedupe(elements) {
 @injectable()
 export default class NavigationService {
   private extensionProvider: IExtensionProvider<INavigationExtension>;
-  private eventEmmiter: EventEmitter;
-  private definition: INavigationElement[];
+  private definition$: any;
 
   constructor(
     @inject(ExtensionProvider)
@@ -61,27 +60,19 @@ export default class NavigationService {
     extensionProvider: IExtensionProvider<INavigationExtension>
   ) {
     this.extensionProvider = extensionProvider;
-
-    this.eventEmmiter = new EventEmitter();
-    this.definition = [];
-
+    this.definition$ = new BehaviorSubject(this.getDefinition());
     this.extensionProvider.subscribe({
-      complete() {
-        this.definition = [];
-        this.eventEmmiter.emit(NAVIGATION_CHANGE);
+      next: () => {
+        this.definition$.next(this.getDefinition());
       }
     });
   }
 
-  public on(type: symbol, callback: () => void) {
-    this.eventEmmiter.on(type, callback);
+  public getDefinition$() {
+    return this.definition$;
   }
 
   public getDefinition() {
-    if (this.definition.length > 0) {
-      return this.definition;
-    }
-
     const elements = this.extensionProvider
       .getAllExtensions()
       .reduce(
@@ -90,9 +81,7 @@ export default class NavigationService {
         []
       );
 
-    this.definition = dedupe(unflatten(elements));
-
-    return this.definition;
+    return dedupe(unflatten(elements));
   }
 
   static get NAVIGATION_CHANGE() {

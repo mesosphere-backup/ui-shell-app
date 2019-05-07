@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Sidebar,
@@ -15,9 +15,19 @@ export default ({ sidebarIsOpen }: { sidebarIsOpen: boolean }) => {
     "NavigationService"
   );
 
+  const [definitions, setDefinitions] = useState([]);
+  useEffect(() => {
+    const subscription = NavigationService.getDefinition$().subscribe(
+      setDefinitions
+    );
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <Sidebar isOpen={sidebarIsOpen}>
-      {NavigationService.getDefinition().map((item, _index) => {
+      {definitions.map((item, _index) => {
         return item.children ? (
           <SidebarSection label={item.name}>
             {item.children.map((element, _index) => (
