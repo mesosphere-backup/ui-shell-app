@@ -11,6 +11,9 @@ export default context => {
         }
       ];
     }
+    get id() {
+      return context.id;
+    }
   }
   return ExamplePluginNavigation;
 };

@@ -9,6 +9,7 @@ interface INavigationElement {
   parent?: string;
   path?: string;
   name?: string;
+  extension?: any;
 }
 
 export const NavigationServiceExtension = Symbol("NavigationServiceExtension");
@@ -63,6 +64,7 @@ export default class NavigationService {
     this.definition$ = new BehaviorSubject(this.getDefinition());
     this.extensionProvider.subscribe({
       next: () => {
+        console.log("next");
         this.definition$.next(this.getDefinition());
       }
     });
@@ -77,7 +79,11 @@ export default class NavigationService {
       .getAllExtensions()
       .reduce(
         (acc: INavigationElement[], extension: INavigationExtension) =>
-          acc.concat(extension.getElements()),
+          acc.concat(
+            extension
+              .getElements()
+              .map(e => ({ ...e, extension: extension.id }))
+          ),
         []
       );
 

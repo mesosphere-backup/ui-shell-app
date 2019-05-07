@@ -25,13 +25,14 @@ export default ({ sidebarIsOpen }: { sidebarIsOpen: boolean }) => {
     };
   }, []);
 
+  const plugins = container.get("removR");
   return (
     <Sidebar isOpen={sidebarIsOpen}>
       {definitions.map((item, _index) => {
         return item.children ? (
           <SidebarSection label={item.name}>
             {item.children.map((element, _index) => (
-              <SidebarItem isActive onClick={() => {}}>
+              <SidebarItem isActive>
                 <SidebarItemLabel>
                   <Link to={element.path}>{element.name}</Link>
                 </SidebarItemLabel>
@@ -39,7 +40,17 @@ export default ({ sidebarIsOpen }: { sidebarIsOpen: boolean }) => {
             ))}
           </SidebarSection>
         ) : (
-          <Link to={item.path}>{item.name}</Link>
+          <Link to={item.path}>
+            <a
+              href="#"
+              onClick={() => {
+                plugins.remove(item.extension);
+              }}
+            >
+              x
+            </a>
+            {item.name}
+          </Link>
         );
       })}
     </Sidebar>
