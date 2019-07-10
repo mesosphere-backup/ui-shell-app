@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Sidebar,
@@ -15,19 +15,42 @@ export default ({ sidebarIsOpen }: { sidebarIsOpen: boolean }) => {
     "NavigationService"
   );
 
+  const [definitions, setDefinitions] = useState([]);
+  useEffect(() => {
+    const subscription = NavigationService.getDefinition$().subscribe(
+      setDefinitions
+    );
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const plugins = container.get("removR");
   return (
     <Sidebar isOpen={sidebarIsOpen}>
-      {NavigationService.getDefinition().map((group, _index) => {
-        return (
-          <SidebarSection label={group.name}>
-            {group.children.map((element, _index) => (
-              <SidebarItem isActive onClick={() => {}}>
+      {definitions.map((item, _index) => {
+        return item.children ? (
+          <SidebarSection label={item.name}>
+            {item.children.map((element, _index) => (
+              <SidebarItem isActive>
                 <SidebarItemLabel>
                   <Link to={element.path}>{element.name}</Link>
                 </SidebarItemLabel>
               </SidebarItem>
             ))}
           </SidebarSection>
+        ) : (
+          <Link to={item.path}>
+            <a
+              href="#"
+              onClick={() => {
+                plugins.remove(item.extension);
+              }}
+            >
+              x
+            </a>
+            {item.name}
+          </Link>
         );
       })}
     </Sidebar>

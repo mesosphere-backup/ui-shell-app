@@ -1,17 +1,17 @@
 import { ContainerModule } from "inversify";
-import ExamplePluginNavigation from "./navigation";
-import ExamplePluginRouting from "./routing";
+import Navigation from "./navigation";
+import Routing from "./routing";
 import {
   NavigationServiceExtension,
   RoutingServiceExtension
 } from "../../core";
 
-export default (_context = {}) =>
+export default (context = {}) =>
   new ContainerModule((bind, _unbind) => {
     bind(NavigationServiceExtension)
-      .to(ExamplePluginNavigation)
+      .to(Navigation(context))
       .inSingletonScope();
     bind(RoutingServiceExtension)
-      .to(ExamplePluginRouting)
+      .to(Routing(context))
       .inSingletonScope();
   });

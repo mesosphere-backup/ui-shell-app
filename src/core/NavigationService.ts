@@ -1,6 +1,6 @@
 import { injectable, inject, named } from "inversify";
-import { EventEmitter } from "events";
 import { IExtensionProvider, ExtensionProvider } from "@extension-kid/core";
+import { BehaviorSubject } from "rxjs";
 
 const NAVIGATION_CHANGE = Symbol("NAVIGATION_CHANGE");
 
@@ -9,6 +9,7 @@ interface INavigationElement {
   parent?: string;
   path?: string;
   name?: string;
+  extension?: any;
 }
 
 export const NavigationServiceExtension = Symbol("NavigationServiceExtension");
@@ -35,12 +36,24 @@ function unflatten(
 
   return children;
 }
+function dedupe(elements) {
+  return elements.reduce((acc, el) => {
+    if (acc.find(({ path }) => path === el.path)) {
+      if (el.duplicable) {
+        return acc;
+      }
+      console.warn("removed duplicate navigation item; you might want to TODO");
+      return acc.concat([el]);
+    } else {
+      return acc.concat([el]);
+    }
+  }, []);
+}
 
 @injectable()
 export default class NavigationService {
   private extensionProvider: IExtensionProvider<INavigationExtension>;
-  private eventEmmiter: EventEmitter;
-  private definition: INavigationElement[];
+  private definition$: any;
 
   constructor(
     @inject(ExtensionProvider)
@@ -48,38 +61,33 @@ export default class NavigationService {
     extensionProvider: IExtensionProvider<INavigationExtension>
   ) {
     this.extensionProvider = extensionProvider;
-
-    this.eventEmmiter = new EventEmitter();
-    this.definition = [];
-
+    this.definition$ = new BehaviorSubject(this.getDefinition());
     this.extensionProvider.subscribe({
-      complete() {
-        this.definition = [];
-        this.eventEmmiter.emit(NAVIGATION_CHANGE);
+      next: () => {
+        console.log("next");
+        this.definition$.next(this.getDefinition());
       }
     });
   }
 
-  public on(type: symbol, callback: () => void) {
-    this.eventEmmiter.on(type, callback);
+  public getDefinition$() {
+    return this.definition$;
   }
 
   public getDefinition() {
-    if (this.definition.length > 0) {
-      return this.definition;
-    }
-
     const elements = this.extensionProvider
       .getAllExtensions()
       .reduce(
         (acc: INavigationElement[], extension: INavigationExtension) =>
-          acc.concat(extension.getElements()),
+          acc.concat(
+            extension
+              .getElements()
+              .map(e => ({ ...e, extension: extension.id }))
+          ),
         []
       );
 
-    this.definition = unflatten(elements);
-
-    return this.definition;
+    return dedupe(unflatten(elements));
   }
 
   static get NAVIGATION_CHANGE() {
